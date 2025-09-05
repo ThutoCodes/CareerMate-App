@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="32dp"
+    android:background="@drawable/splash_gradient"
+    tools:ignore="ExtraText">
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:src="@drawable/ui_logo"
+        android:contentDescription="@string/app_logo"
+        android:layout_marginBottom="24dp"
+        android:scaleType="centerCrop"
+        android:background="@drawable/careermatelogo_background"
+        android:clipToOutline="true"
+        android:elevation="8dp"
+        android:padding="16dp"
+        android:alpha="0"
+        android:translationY="-50dp"/>
+
+    <!-- App Name -->
+    <TextView
+        android:id="@+id/appName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CareerMate"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:fontFamily="@font/poppins_bold"
+        android:alpha="0"
+        android:translationY="50dp"/>
+
+    <!-- Tagline -->
+    <TextView
+        android:id="@+id/tagline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Your AI-powered career assistant"
+        android:textSize="16sp"
+        android:layout_marginTop="8dp"
+        android:textColor="@android:color/white"
+        android:fontFamily="@font/poppins_regular"
+        android:textAlignment="center"
+        android:alpha="0"
+        android:translationY="50dp"/>
+
+    <!-- Loading Indicator -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:alpha="0"
+        android:indeterminateTint="@android:color/white" />
+
+</LinearLayout>
