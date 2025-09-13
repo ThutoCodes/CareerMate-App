@@ -25,38 +25,33 @@ class SplashActivity : AppCompatActivity() {
         val progressBar = findViewById<ProgressBar>(R.id.progressBar)
 
         // --- Logo Animations ---
-        val logoFade = ObjectAnimator.ofFloat(logo, "alpha", 0f, 1f).apply { duration = 1000 }
-        val logoSlide = ObjectAnimator.ofFloat(logo, "translationY", -50f, 0f).apply { duration = 1000 }
+        val logoFade = ObjectAnimator.ofFloat(logo, "alpha", 0f, 1f).apply { duration = 800 }
+        val logoSlide = ObjectAnimator.ofFloat(logo, "translationY", -50f, 0f).apply { duration = 800 }
 
         // --- App Name Animations ---
-        val appNameFade = ObjectAnimator.ofFloat(appName, "alpha", 0f, 1f).apply { duration = 800 }
-        val appNameSlide = ObjectAnimator.ofFloat(appName, "translationY", 50f, 0f).apply { duration = 800 }
+        val appNameFade = ObjectAnimator.ofFloat(appName, "alpha", 0f, 1f).apply { duration = 600 }
+        val appNameSlide = ObjectAnimator.ofFloat(appName, "translationY", 50f, 0f).apply { duration = 600 }
 
         // --- Tagline Animations ---
-        val taglineFade = ObjectAnimator.ofFloat(tagline, "alpha", 0f, 1f).apply { duration = 800 }
-        val taglineSlide = ObjectAnimator.ofFloat(tagline, "translationY", 50f, 0f).apply { duration = 800 }
+        val taglineFade = ObjectAnimator.ofFloat(tagline, "alpha", 0f, 1f).apply { duration = 600 }
+        val taglineSlide = ObjectAnimator.ofFloat(tagline, "translationY", 50f, 0f).apply { duration = 600 }
 
-        // --- ProgressBar Animation ---
-        val progressFade = ObjectAnimator.ofFloat(progressBar, "alpha", 0f, 1f).apply { duration = 500 }
+        // --- ProgressBar Animation (clean fade-in only) ---
+        val progressFade = ObjectAnimator.ofFloat(progressBar, "alpha", 0f, 1f).apply { duration = 400 }
 
         // --- AnimatorSet to sequence animations ---
         AnimatorSet().apply {
-            play(logoFade).with(logoSlide)                 // Logo fades and slides together
-            play(appNameFade).with(appNameSlide)           // App name fades and slides together
-            play(taglineFade).with(taglineSlide)           // Tagline fades and slides together
-
-            // Sequence everything: Logo -> App Name -> Tagline -> ProgressBar
-            play(appNameFade).after(logoFade)
-            play(taglineFade).after(appNameFade)
+            play(logoFade).with(logoSlide)       // Logo fades + slides
+            play(appNameFade).with(appNameSlide).after(logoFade)
+            play(taglineFade).with(taglineSlide).after(appNameFade)
             play(progressFade).after(taglineFade)
-
             start()
         }
 
-        // --- Navigate to MainActivity after 3 seconds ---
+        // --- Navigate to RegisterActivity after 3.5s ---
         Handler(Looper.getMainLooper()).postDelayed({
             startActivity(Intent(this, RegisterActivity::class.java))
             finish()
-        }, 3000)
+        }, 3500)
     }
 }
