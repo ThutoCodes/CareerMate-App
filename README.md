@@ -26,7 +26,11 @@ The app is designed to **analyze job descriptions, tailor your CV, and provide i
 
 ## 📸 Mockups
 Below are the initial design mockups showcasing the app’s concept and UI flow:  
+<img width="1536" height="1024" alt="Image" src="https://github.com/user-attachments/assets/864534d1-ac59-4598-9bb4-5b7853edba6f" />
 
+<img width="1536" height="1024" alt="Image" src="https://github.com/user-attachments/assets/b92c571a-fa86-4c76-97ac-fad461ee426d" />
+
+<img width="1536" height="1024" alt="Image" src="https://github.com/user-attachments/assets/ed9dfc23-0f7a-4f04-936c-6f7fbfdfb113" />
 
 
 ---
