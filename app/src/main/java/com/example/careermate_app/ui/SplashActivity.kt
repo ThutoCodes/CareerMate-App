@@ -11,6 +11,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.careermate_app.R
+import com.example.careermate_app.prefs.SessionManager
 
 class SplashActivity : AppCompatActivity() {
 
@@ -36,21 +37,32 @@ class SplashActivity : AppCompatActivity() {
         val taglineFade = ObjectAnimator.ofFloat(tagline, "alpha", 0f, 1f).apply { duration = 600 }
         val taglineSlide = ObjectAnimator.ofFloat(tagline, "translationY", 50f, 0f).apply { duration = 600 }
 
-        // --- ProgressBar Animation (clean fade-in only) ---
+        // --- ProgressBar Animation (fade-in only) ---
         val progressFade = ObjectAnimator.ofFloat(progressBar, "alpha", 0f, 1f).apply { duration = 400 }
 
         // --- AnimatorSet to sequence animations ---
         AnimatorSet().apply {
-            play(logoFade).with(logoSlide)       // Logo fades + slides
+            play(logoFade).with(logoSlide)
             play(appNameFade).with(appNameSlide).after(logoFade)
             play(taglineFade).with(taglineSlide).after(appNameFade)
             play(progressFade).after(taglineFade)
             start()
         }
 
-        // --- Navigate to RegisterActivity after 3.5s ---
+        // --- Navigate after 3.5s ---
         Handler(Looper.getMainLooper()).postDelayed({
-            startActivity(Intent(this, RegisterActivity::class.java))
+            val sessionManager = SessionManager(this)
+
+            if (sessionManager.fetchAuthToken() != null) {
+                // User is logged in → go to MainActivity
+                startActivity(Intent(this, MainActivity::class.java))
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+            } else {
+                // User not logged in → go to RegisterActivity
+                startActivity(Intent(this, RegisterActivity::class.java))
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+            }
+
             finish()
         }, 3500)
     }

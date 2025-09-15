@@ -7,6 +7,10 @@ android {
     namespace = "com.example.careermate_app"
     compileSdk = 34
 
+    buildFeatures {
+        buildConfig = true  // <-- enable BuildConfig
+    }
+
     defaultConfig {
         applicationId = "com.example.careermate_app"
         minSdk = 24
@@ -15,6 +19,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        // Backend URL from gradle.properties
+        buildConfigField("String", "BACKEND_URL", "\"http://10.0.2.2:3000/api/\"")
     }
 
     buildTypes {

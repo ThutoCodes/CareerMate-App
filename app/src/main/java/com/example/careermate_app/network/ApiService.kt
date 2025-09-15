@@ -2,10 +2,12 @@ package com.example.careermate_app.network
 
 import com.example.careermate_app.models.LoginRequest
 import com.example.careermate_app.models.LoginResponse
+import com.example.careermate_app.models.ProfileResponse
 import com.example.careermate_app.models.RegisterRequest
 import com.example.careermate_app.models.RegisterResponse
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
 
 
@@ -18,4 +20,8 @@ interface ApiService {
         // REGISTER ENDPOINT
         @POST("users/register")
         fun registerUser(@Body registerRequest: RegisterRequest): Call<RegisterResponse>
+
+        @GET("users/me")
+        fun getProfile(): Call<ProfileResponse>
+
 }

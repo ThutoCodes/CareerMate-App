@@ -13,6 +13,7 @@ import android.widget.Toast
 import com.example.careermate_app.models.LoginRequest
 import com.example.careermate_app.models.LoginResponse
 import com.example.careermate_app.network.ApiClient
+import com.example.careermate_app.prefs.SessionManager
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -22,6 +23,7 @@ import retrofit2.Response
 
 
 class LogInActivity : AppCompatActivity() {
+
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,12 +37,11 @@ class LogInActivity : AppCompatActivity() {
         val loginButton = findViewById<MaterialButton>(R.id.loginButton)
         val signUpLink = findViewById<TextView>(R.id.signUpLink)
 
-        // Set up click listeners
+        // Click login button
         loginButton.setOnClickListener {
             val email = emailField.text.toString().trim()
             val password = passwordField.text.toString().trim()
 
-            // Input validation
             var isValid = true
 
             if (email.isEmpty()) {
@@ -58,27 +59,24 @@ class LogInActivity : AppCompatActivity() {
             }
 
             if (isValid) {
-                loginUser(email, password)
+                loginUser(email, password, loginButton)
             }
         }
 
-        // Navigate to registration
+        // Navigate to RegisterActivity
         signUpLink.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
         }
     }
 
-    private fun loginUser(email: String, password: String) {
+    private fun loginUser(email: String, password: String, loginButton: MaterialButton) {
         val request = LoginRequest(email, password)
 
         // Show loading state
-        val loginButton = findViewById<MaterialButton>(R.id.loginButton)
         loginButton.text = "Logging in..."
         loginButton.isEnabled = false
 
-        // Call API
-        val call = ApiClient.apiService.loginUser(request)
-        call.enqueue(object : Callback<LoginResponse> {
+        ApiClient.apiService.loginUser(request).enqueue(object : Callback<LoginResponse> {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                 // Reset button state
                 loginButton.text = "Log In"
@@ -86,26 +84,43 @@ class LogInActivity : AppCompatActivity() {
 
                 if (response.isSuccessful) {
                     val loginResponse = response.body()
+
+                    // ✅ Save session with userId and token
+                    loginResponse?.let {
+                        val sessionManager = SessionManager(this@LogInActivity)
+                        sessionManager.saveUser(it.userId, it.token)
+                    }
+
                     Toast.makeText(this@LogInActivity, "Welcome!", Toast.LENGTH_SHORT).show()
-                    Log.d("API LOGIN", "Message: ${loginResponse?.message}")
 
                     // Navigate to MainActivity
                     val intent = Intent(this@LogInActivity, MainActivity::class.java)
                     startActivity(intent)
                     finish()
+
                 } else {
-                    Toast.makeText(this@LogInActivity, "Login failed. Please check your credentials.", Toast.LENGTH_SHORT).show()
-                    Log.e("API_LOGIN", "Error code: ${response.code()} Body: ${response.errorBody()?.string()}")
+                    Toast.makeText(
+                        this@LogInActivity,
+                        "Invalid credentials. Please try again.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    Log.e(
+                        "API_LOGIN",
+                        "Error code: ${response.code()}, Body: ${response.errorBody()?.string()}"
+                    )
                 }
             }
 
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                // Reset button state
                 loginButton.text = "Log In"
                 loginButton.isEnabled = true
 
-                Toast.makeText(this@LogInActivity, "Error: ${t.message}", Toast.LENGTH_LONG).show()
-                Log.e("API_LOGIN_ERROR", t.toString())
+                Toast.makeText(
+                    this@LogInActivity,
+                    "Network error: ${t.message}",
+                    Toast.LENGTH_LONG
+                ).show()
+                Log.e("API_LOGIN_ERROR", "Failure: ${t.message}")
             }
         })
     }
