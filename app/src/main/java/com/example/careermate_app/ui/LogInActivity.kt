@@ -94,7 +94,7 @@ class LogInActivity : AppCompatActivity() {
                     Toast.makeText(this@LogInActivity, "Welcome!", Toast.LENGTH_SHORT).show()
 
                     // Navigate to MainActivity
-                    val intent = Intent(this@LogInActivity, MainActivity::class.java)
+                    val intent = Intent(this@LogInActivity, DashboardActivity::class.java)
                     startActivity(intent)
                     finish()
 
