@@ -1,6 +1,5 @@
 package com.example.careermate_app.ui
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -9,22 +8,28 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.careermate_app.R
-import com.example.careermate_app.models.RegisterRequest
-import com.example.careermate_app.models.RegisterResponse
-import com.example.careermate_app.network.ApiClient
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+// 1. Import Firebase libraries
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 
 class RegisterActivity: AppCompatActivity() {
 
-    @SuppressLint("MissingInflatedId")
+    // 2. Declare Firebase Auth and Firestore instances
+    private lateinit var auth: FirebaseAuth
+    private lateinit var db: FirebaseFirestore
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
+
+        // 3. Initialize Firebase instances
+        auth = Firebase.auth
+        db = FirebaseFirestore.getInstance()
 
         val nameField = findViewById<TextInputEditText>(R.id.nameField)
         val emailField = findViewById<TextInputEditText>(R.id.emailField)
@@ -36,7 +41,6 @@ class RegisterActivity: AppCompatActivity() {
         val signInLink = findViewById<TextView>(R.id.signInLink)
         val backButton = findViewById<ImageButton>(R.id.backButton)
 
-        // Set up click listeners
         backButton.setOnClickListener {
             onBackPressed()
         }
@@ -46,22 +50,16 @@ class RegisterActivity: AppCompatActivity() {
             val email = emailField.text.toString().trim()
             val password = passwordField.text.toString().trim()
 
-            // Input validation
             var isValid = true
-
             if (name.isEmpty()) {
                 nameLayout.error = "Name is required"
                 isValid = false
-            } else {
-                nameLayout.error = null
-            }
+            } else { nameLayout.error = null }
 
             if (email.isEmpty()) {
                 emailLayout.error = "Email is required"
                 isValid = false
-            } else {
-                emailLayout.error = null
-            }
+            } else { emailLayout.error = null }
 
             if (password.isEmpty()) {
                 passwordLayout.error = "Password is required"
@@ -69,64 +67,62 @@ class RegisterActivity: AppCompatActivity() {
             } else if (password.length < 8) {
                 passwordLayout.error = "Password must be at least 8 characters"
                 isValid = false
-            } else {
-                passwordLayout.error = null
-            }
+            } else { passwordLayout.error = null }
 
             if (isValid) {
-                registerUser(name, email, password)
+                // Call the new Firebase registration function
+                registerUserWithFirebase(name, email, password)
             }
         }
 
-        // Navigate to login
         signInLink.setOnClickListener {
             startActivity(Intent(this, LogInActivity::class.java))
             finish()
         }
     }
 
-    private fun registerUser(name: String, email: String, password: String) {
-        // Use 'username' to match backend
-        val request = RegisterRequest(username = name, email = email, password = password)
-
-        // Show loading state
+    // 4. *** NEW FIREBASE REGISTRATION LOGIC ***
+    private fun registerUserWithFirebase(name: String, email: String, password: String) {
         val registerButton = findViewById<MaterialButton>(R.id.registerButton)
         registerButton.text = "Creating account..."
         registerButton.isEnabled = false
 
-        val call = ApiClient.apiService.registerUser(request)
-        call.enqueue(object : Callback<RegisterResponse> {
-            override fun onResponse(
-                call: Call<RegisterResponse>,
-                response: Response<RegisterResponse>
-            ) {
-                // Reset button state
-                registerButton.text = "Create Account"
-                registerButton.isEnabled = true
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    Log.d("FIREBASE_AUTH", "createUserWithEmail:success")
+                    // Authentication was successful, now save the username to Firestore.
+                    val firebaseUser = auth.currentUser
+                    val userProfile = hashMapOf(
+                        "username" to name,
+                        "email" to email
+                    )
 
-                if (response.isSuccessful) {
-                    val registerResponse = response.body()
-                    Toast.makeText(this@RegisterActivity, "Registered Successfully!", Toast.LENGTH_SHORT).show()
-                    Log.d("API_REGISTER", "Message: ${registerResponse?.message}")
+                    // Use the user's unique ID (uid) from Firebase Auth as the document ID in Firestore
+                    db.collection("users").document(firebaseUser!!.uid)
+                        .set(userProfile)
+                        .addOnSuccessListener {
+                            Log.d("FIRESTORE", "User profile created for ${firebaseUser.uid}")
+                            Toast.makeText(this, "Registered Successfully!", Toast.LENGTH_SHORT).show()
 
-                    // Redirect to LoginActivity
-                    val intent = Intent(this@RegisterActivity, LogInActivity::class.java)
-                    startActivity(intent)
-                    finish() // close RegisterActivity so back button won't return here
+                            // Redirect to Dashboard
+                            val intent = Intent(this, DashboardActivity::class.java)
+                            startActivity(intent)
+                            finishAffinity() // Closes all previous activities
+                        }
+                        .addOnFailureListener { e ->
+                            Log.w("FIRESTORE", "Error adding document", e)
+                            registerButton.text = "Create Account"
+                            registerButton.isEnabled = true
+                            Toast.makeText(this, "Error saving user profile.", Toast.LENGTH_SHORT).show()
+                        }
                 } else {
-                    Toast.makeText(this@RegisterActivity, "Registration Failed", Toast.LENGTH_SHORT).show()
-                    Log.e("API_REGISTER", "Error code: ${response.code()} Body: ${response.errorBody()?.string()}")
+                    // If sign in fails, display a message to the user.
+                    Log.w("FIREBASE_AUTH", "createUserWithEmail:failure", task.exception)
+                    registerButton.text = "Create Account"
+                    registerButton.isEnabled = true
+                    Toast.makeText(baseContext, "Registration failed: ${task.exception?.message}", Toast.LENGTH_LONG).show()
                 }
             }
-
-            override fun onFailure(call: Call<RegisterResponse>, t: Throwable) {
-                // Reset button state
-                registerButton.text = "Create Account"
-                registerButton.isEnabled = true
-
-                Toast.makeText(this@RegisterActivity, "Error: ${t.message}", Toast.LENGTH_LONG).show()
-                Log.e("API_REGISTER_ERROR", t.toString())
-            }
-        })
     }
 }

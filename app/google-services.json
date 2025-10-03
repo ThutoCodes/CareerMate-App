@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "49004574201",
+    "project_id": "careermate-app-d9a77",
+    "storage_bucket": "careermate-app-d9a77.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:49004574201:android:178886edc1b56c87e33928",
+        "android_client_info": {
+          "package_name": "com.example.careermate_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-RQWRUD5z7thJwserWqxmV-B-DGNh9eY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

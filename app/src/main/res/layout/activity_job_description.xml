@@ -1,112 +1,148 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
-    android:padding="24dp"
+    android:fillViewport="true"
+    android:background="?attr/colorSurface"
     tools:context=".ui.JobDescriptionActivity">
 
-    <!-- Title -->
-    <TextView
-        android:id="@+id/titleJobDescription"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Interview Preparation"
-        android:textSize="26sp"
-        android:textStyle="bold"
-        android:textColor="@android:color/black"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="32dp"/>
+        android:padding="24dp">
 
-    <!-- Job Description Input -->
-    <EditText
-        android:id="@+id/inputJobDescription"
-        android:layout_width="0dp"
-        android:layout_height="200dp"
-        android:hint="Paste the job description here..."
-        android:gravity="start|top"
-        android:background="@drawable/rounded_edittext"
-        android:padding="16dp"
-        android:textColor="@android:color/black"
-        android:textColorHint="#888888"
-        android:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@id/titleJobDescription"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="24dp"/>
+        <!-- Back Button -->
+        <ImageButton
+            android:id="@+id/backButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Back"
+            android:src="@drawable/ic_arrow_back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="?attr/colorOnSurface" />
 
-    <!-- Analyze Button -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnAnalyzeJob"
-        style="@style/Widget.Material3.Button.OutlinedButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Analyze Job Description"
-        android:textColor="@android:color/black"
-        android:textSize="18sp"
-        app:cornerRadius="16dp"
-        app:icon="@drawable/ic_search"
-        app:iconGravity="start"
-        app:iconSize="32dp"
-        app:iconPadding="12dp"
-        app:iconTint="@android:color/black"
-        app:layout_constraintTop_toBottomOf="@id/inputJobDescription"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="24dp"/>
+        <!-- Title -->
+        <TextView
+            android:id="@+id/titleJobDescription"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Interview Preparation"
+            android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
+            android:textColor="?attr/colorOnSurface"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/backButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/backButton"
+            app:layout_constraintTop_toTopOf="@id/backButton" />
 
-    <!-- Results Section -->
-    <TextView
-        android:id="@+id/resultsTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Key Insights"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="@android:color/black"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/btnAnalyzeJob"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="32dp"/>
+        <!-- Job Description Input -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/inputLayoutJobDescription"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:hint="Paste the job description here..."
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/titleJobDescription">
 
-    <TextView
-        android:id="@+id/resultsContent"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="• Skills: Java, SQL, Problem-solving\n• Experience: 2+ years in software dev\n• Responsibilities: Build APIs, write unit tests"
-        android:textSize="16sp"
-        android:textColor="@android:color/black"
-        android:visibility="gone"
-        android:padding="12dp"
-        android:background="@drawable/rounded_edittext"
-        app:layout_constraintTop_toBottomOf="@id/resultsTitle"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="12dp"/>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/inputJobDescription"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:gravity="top|start"
+                android:inputType="textMultiLine"
+                android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
 
-    <!-- Mock Interview Button -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnMockInterview"
-        style="@style/Widget.Material3.Button.OutlinedButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Start Mock Interview"
-        android:textColor="@android:color/black"
-        android:textSize="18sp"
-        app:cornerRadius="16dp"
-        app:icon="@android:drawable/ic_btn_speak_now"
-        app:iconGravity="start"
-        app:iconSize="32dp"
-        app:iconPadding="12dp"
-        app:iconTint="@android:color/black"
-        app:layout_constraintTop_toBottomOf="@id/resultsContent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="28dp"
-        android:visibility="gone"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- Analyze Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAnalyzeJob"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:paddingVertical="16dp"
+            android:text="Analyze Job Description"
+            android:textSize="16sp"
+            app:icon="@drawable/ic_search"
+            app:iconGravity="textStart"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/inputLayoutJobDescription" />
+
+        <!-- Loading Indicator -->
+        <ProgressBar
+            android:id="@+id/loadingIndicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/btnAnalyzeJob"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:visibility="visible"/>
+
+        <!-- Results Section -->
+        <TextView
+            android:id="@+id/resultsTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="Key Insights &amp; Interview Tips"
+            android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+            android:textColor="?attr/colorOnSurface"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btnAnalyzeJob"
+            tools:visibility="visible" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/resultsCard"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:visibility="gone"
+            app:cardBackgroundColor="?attr/colorSurfaceContainer"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/resultsTitle"
+            app:strokeWidth="0dp"
+            tools:visibility="visible">
+
+            <TextView
+                android:id="@+id/resultsContent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                tools:text="• Skills: Java, SQL, Problem-solving\n• Experience: 2+ years in software dev\n• Responsibilities: Build APIs, write unit tests" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Mock Interview Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnMockInterview"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:paddingVertical="16dp"
+            android:text="Start Mock Interview"
+            android:textSize="16sp"
+            android:visibility="gone"
+            app:iconGravity="textStart"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/resultsCard"
+            tools:visibility="visible" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

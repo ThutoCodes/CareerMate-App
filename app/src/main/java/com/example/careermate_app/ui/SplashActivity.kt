@@ -5,19 +5,30 @@ import android.animation.ObjectAnimator
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+// --- FIXED THIS SECTION ---
 import android.os.Looper
 import android.widget.ImageView
+// --------------------------
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.careermate_app.R
-import com.example.careermate_app.prefs.SessionManager
+// 1. Import the Firebase Auth library
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 class SplashActivity : AppCompatActivity() {
+
+    // 2. Declare Firebase Auth instance
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
+
+        // 3. Initialize Firebase Auth
+        auth = Firebase.auth
 
         // Initialize views
         val logo = findViewById<ImageView>(R.id.logo)
@@ -25,22 +36,15 @@ class SplashActivity : AppCompatActivity() {
         val tagline = findViewById<TextView>(R.id.tagline)
         val progressBar = findViewById<ProgressBar>(R.id.progressBar)
 
-        // --- Logo Animations ---
+        // --- Animations (This part is correct and remains unchanged) ---
         val logoFade = ObjectAnimator.ofFloat(logo, "alpha", 0f, 1f).apply { duration = 800 }
         val logoSlide = ObjectAnimator.ofFloat(logo, "translationY", -50f, 0f).apply { duration = 800 }
-
-        // --- App Name Animations ---
         val appNameFade = ObjectAnimator.ofFloat(appName, "alpha", 0f, 1f).apply { duration = 600 }
         val appNameSlide = ObjectAnimator.ofFloat(appName, "translationY", 50f, 0f).apply { duration = 600 }
-
-        // --- Tagline Animations ---
         val taglineFade = ObjectAnimator.ofFloat(tagline, "alpha", 0f, 1f).apply { duration = 600 }
         val taglineSlide = ObjectAnimator.ofFloat(tagline, "translationY", 50f, 0f).apply { duration = 600 }
-
-        // --- ProgressBar Animation (fade-in only) ---
         val progressFade = ObjectAnimator.ofFloat(progressBar, "alpha", 0f, 1f).apply { duration = 400 }
 
-        // --- AnimatorSet to sequence animations ---
         AnimatorSet().apply {
             play(logoFade).with(logoSlide)
             play(appNameFade).with(appNameSlide).after(logoFade)
@@ -49,21 +53,20 @@ class SplashActivity : AppCompatActivity() {
             start()
         }
 
-        // --- Navigate after 3.5s ---
+        // 4. *** NEW NAVIGATION LOGIC ***
         Handler(Looper.getMainLooper()).postDelayed({
-            val sessionManager = SessionManager(this)
-
-            if (sessionManager.fetchAuthToken() != null) {
-                // User is logged in → go to MainActivity
-                startActivity(Intent(this, MainActivity::class.java))
+            // Check if a user is currently signed in to Firebase
+            if (auth.currentUser != null) {
+                // User is logged in → go to DashboardActivity
+                startActivity(Intent(this, DashboardActivity::class.java))
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
             } else {
-                // User not logged in → go to RegisterActivity
-                startActivity(Intent(this, RegisterActivity::class.java))
+                // User not logged in → go to LogInActivity
+                startActivity(Intent(this, LogInActivity::class.java))
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
             }
 
-            finish()
+            finish() // Finish SplashActivity so the user can't go back to it
         }, 3500)
     }
 }
